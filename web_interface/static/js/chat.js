@@ -1,3 +1,5 @@
+// web_interface/static/js/chat.js
+
 document.addEventListener('DOMContentLoaded', () => {
     const chatBox = document.getElementById('chat-box');
     const messageInput = document.getElementById('message-input');
@@ -38,8 +40,44 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             const data = await response.json();
-            // Display bot's response
-            addMessage(data.message, false);
+            const botMessage = data.message;
+
+            // Check if the message contains a download link marker
+            // Expected format from backend: "Some text... ||DOWNLOAD_LINK:filename.pdf"
+            if (typeof botMessage === 'string' && botMessage.includes("||DOWNLOAD_LINK:")) {
+                const parts = botMessage.split("||DOWNLOAD_LINK:");
+                const messageText = parts[0];
+                const filename = parts[1].replace('||', ''); // <-- THIS IS THE FIX
+
+                // Display the main message (if any)
+                if (messageText) {
+                    addMessage(messageText, false);
+                }
+
+                // Create and add the download button/link
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('message', 'bot-message');
+
+                const downloadLink = document.createElement('a');
+                // Ensure the backend route /download_letter/<filename> serves the file
+                downloadLink.href = `/download_letter/${encodeURIComponent(filename)}`;
+                downloadLink.textContent = 'Download Your Sanction Letter';
+                downloadLink.setAttribute('download', filename); // hint to browser
+                downloadLink.style.display = 'block';
+                downloadLink.style.textAlign = 'center';
+                downloadLink.style.marginTop = '10px';
+                downloadLink.style.color = '#007bff';
+                downloadLink.style.textDecoration = 'none';
+                downloadLink.style.fontWeight = 'bold';
+
+                messageElement.appendChild(downloadLink);
+                chatBox.appendChild(messageElement);
+                chatBox.scrollTop = chatBox.scrollHeight;
+
+            } else {
+                // Display a normal bot response
+                addMessage(botMessage, false);
+            }
 
         } catch (error) {
             console.error('Error:', error);

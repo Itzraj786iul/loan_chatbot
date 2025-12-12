@@ -1,5 +1,5 @@
 # web_interface/app.py
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_from_directory # <-- ADD send_from_directory HERE
 from flask_cors import CORS
 import sys
 import os
@@ -13,8 +13,7 @@ app = Flask(__name__)
 # Enable CORS for all routes
 CORS(app) 
 
-# Create a single instance of the Master Agent to be used across sessions
-# In a real product with many users, you'd manage agent instances more carefully
+# Create a single instance of the Master Agent
 master_agent = MasterAgent()
 
 @app.route('/')
@@ -24,7 +23,7 @@ def index():
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    """Handles chat messages from the user."""
+    # ... (keep all the existing code for the /chat route) ...
     # Get the user's message from the POST request
     user_message = request.json.get('message', '')
     
@@ -98,7 +97,10 @@ def chat():
                 letter_result = master_agent.sanction_generator.generate_letter(chat.customer_details, loan_details_for_letter)
                 
                 if letter_result['status'] == 'success':
-                    response_message += f"\n\n🎉 Congratulations! Your loan of ₹{loan_details_for_letter['approved_amount']:,} has been approved. Your sanction letter has been generated."
+                    # --- MODIFICATION HERE ---
+                    # Pass the filename to the frontend
+                    response_message += f"\n\n🎉 Congratulations! Your loan of ₹{loan_details_for_letter['approved_amount']:,} has been approved."
+                    response_message += f"||DOWNLOAD_LINK:{letter_result['filename']}||" # Special marker for the frontend
                     chat.state = 'CONVERSATION_END'
                 else:
                     response_message += "\n\nThere was an issue generating your sanction letter. Please contact support."
@@ -114,7 +116,9 @@ def chat():
                 }
                 letter_result = master_agent.sanction_generator.generate_letter(chat.customer_details, loan_details_for_letter)
                 if letter_result['status'] == 'success':
-                    response_message += f"\n\n🎉 Congratulations! Your loan of ₹{loan_details_for_letter['approved_amount']:,} has been approved. Your sanction letter has been generated."
+                    # --- MODIFICATION HERE ---
+                    response_message += f"\n\n🎉 Congratulations! Your loan of ₹{loan_details_for_letter['approved_amount']:,} has been approved."
+                    response_message += f"||DOWNLOAD_LINK:{letter_result['filename']}||" # Special marker for the frontend
                     chat.state = 'CONVERSATION_END'
                 else:
                     response_message += "\n\nThere was an issue generating your sanction letter. Please contact support."
@@ -131,6 +135,19 @@ def chat():
         response_message = "This conversation has concluded. Please refresh the page to start a new one."
 
     return jsonify({"message": response_message})
+
+
+# --- ADD THIS NEW ROUTE ---
+@app.route('/download_letter/<filename>')
+def download_letter(filename):
+    """Serves the generated sanction letter for download."""
+    try:
+        # The directory where letters are stored
+        letter_directory = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'generated_letters')
+        return send_from_directory(letter_directory, filename, as_attachment=True)
+    except FileNotFoundError:
+        return "File not found.", 404
+
 
 if __name__ == '__main__':
     # IMPORTANT: Make sure your mock API server is running in another terminal!
