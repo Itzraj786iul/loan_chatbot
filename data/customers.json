@@ -1,0 +1,52 @@
+[
+  {
+    "customer_id": "CUST001",
+    "name": "Rajesh Kumar",
+    "phone": "9876543210",
+    "email": "rajesh.kumar@email.com",
+    "address": "123, Bandra West, Mumbai - 400050",
+    "credit_score": 750,
+    "pre_approved_limit": 500000,
+    "salary": 80000
+  },
+  {
+    "customer_id": "CUST002",
+    "name": "Priya Sharma",
+    "phone": "9876543211",
+    "email": "priya.sharma@email.com",
+    "address": "456, Koramangala, Bangalore - 560034",
+    "credit_score": 820,
+    "pre_approved_limit": 750000,
+    "salary": 95000
+  },
+  {
+    "customer_id": "CUST003",
+    "name": "Amit Patel",
+    "phone": "9876543212",
+    "email": "amit.patel@email.com",
+    "address": "789, Satellite, Ahmedabad - 380015",
+    "credit_score": 680,
+    "pre_approved_limit": 200000,
+    "salary": 60000
+  },
+  {
+    "customer_id": "CUST004",
+    "name": "Neha Singh",
+    "phone": "9876543213",
+    "email": "neha.singh@email.com",
+    "address": "321, Connaught Place, Delhi - 110001",
+    "credit_score": 790,
+    "pre_approved_limit": 600000,
+    "salary": 120000
+  },
+  {
+    "customer_id": "CUST005",
+    "name": "Vikram Reddy",
+    "phone": "9876543214",
+    "email": "vikram.reddy@email.com",
+    "address": "654, Jubilee Hills, Hyderabad - 500033",
+    "credit_score": 720,
+    "pre_approved_limit": 400000,
+    "salary": 90000
+  }
+]
