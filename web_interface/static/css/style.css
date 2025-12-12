@@ -1,99 +1,342 @@
+:root {
+    --primary-color: #004a7c; /* Tata Capital Blue */
+    --secondary-color: #f4f4f4;
+    --text-color: #333;
+    --light-gray: #e9e9eb;
+    --white: #ffffff;
+    --shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    --font-family: 'Inter', sans-serif;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    font-family: var(--font-family);
+    background-color: var(--secondary-color);
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
+    color: var(--text-color);
 }
 
-.chat-container {
-    width: 400px;
-    height: 600px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    background-color: #fff;
+.main-container {
+    display: flex;
+    width: 900px;
+    height: 650px;
+    background-color: var(--white);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+}
+
+/* --- Left Sidebar --- */
+.sidebar {
+    width: 350px;
+    background-color: var(--primary-color);
+    color: var(--white);
+    padding: 30px;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    justify-content: space-between;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo {
+    width: 50px;
+    height: 50px;
+}
+
+.sidebar h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.sidebar-content h2 {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-top: 40px;
+}
+
+.sidebar-content p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    opacity: 0.9;
+    margin-bottom: 30px;
+}
+
+.features {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.feature {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.9rem;
+}
+
+.feature .icon {
+    font-size: 1.2rem;
+}
+
+/* --- Right Chat Container --- */
+.chat-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: #fafafa;
 }
 
 .chat-header {
-    background-color: #004a7c; /* Tata Capital Blue */
-    color: white;
-    padding: 15px;
-    text-align: center;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
+    padding: 20px 25px;
+    background-color: var(--white);
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.chat-header h2 {
+.header-info strong {
+    font-size: 1.1rem;
+}
+
+.header-info p {
+    font-size: 0.8rem;
+    color: #888;
     margin: 0;
-    font-size: 1.5em;
 }
 
-.chat-header p {
-    margin: 5px 0 0 0;
-    font-size: 0.9em;
-    opacity: 0.9;
+.status-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #ccc;
+}
+
+.status-indicator.online {
+    background-color: #4caf50; /* Green */
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.3);
 }
 
 .chat-box {
     flex-grow: 1;
-    padding: 20px;
+    padding: 25px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    gap: 15px;
+}
+
+.message-wrapper {
+    display: flex;
     gap: 10px;
+    margin-bottom: 15px;
+}
+
+.message-wrapper.user {
+    flex-direction: row-reverse;
+}
+
+.message-wrapper.bot {
+    flex-direction: row;
+}
+
+.bot-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    color: var(--white);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 600;
+    flex-shrink: 0; /* Prevents avatar from shrinking */
 }
 
 .message {
-    max-width: 75%;
-    padding: 10px 15px;
+    max-width: 80%;
+    padding: 12px 18px;
     border-radius: 20px;
-    line-height: 1.4;
+    line-height: 1.5;
+    font-size: 0.95rem;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .user-message {
-    background-color: #007bff;
-    color: white;
+    background-color: var(--primary-color);
+    color: var(--white);
     align-self: flex-end;
     border-bottom-right-radius: 5px;
 }
 
 .bot-message {
-    background-color: #e9e9eb;
-    color: #000;
+    background-color: var(--white);
+    color: var(--text-color);
     align-self: flex-start;
+    border: 1px solid #eee;
     border-bottom-left-radius: 5px;
+}
+
+.timestamp {
+    font-size: 0.7rem;
+    color: #aaa;
+    margin-top: 5px;
+}
+
+#typing-indicator-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 25px;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+#typing-indicator-container.show {
+    opacity: 1;
+}
+
+.typing-indicator {
+    display: flex;
+    align-items: center;
+    padding: 15px 18px;
+    background-color: var(--white);
+    border-radius: 20px;
+    border: 1px solid #eee;
+    border-bottom-left-radius: 5px;
+}
+
+.typing-indicator span {
+    height: 8px;
+    width: 8px;
+    background-color: #ccc;
+    border-radius: 50%;
+    display: inline-block;
+    margin: 0 2px;
+    animation: typing 1.4s infinite ease-in-out;
+}
+
+.typing-indicator span:nth-child(1) {
+    animation-delay: -0.32s;
+}
+
+.typing-indicator span:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+@keyframes typing {
+    0%, 80%, 100% {
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.chat-input-container {
+    padding: 20px;
+    background-color: var(--white);
+    border-top: 1px solid #eee;
 }
 
 .chat-input {
     display: flex;
-    padding: 10px;
-    border-top: 1px solid #ccc;
+    align-items: center;
+    background-color: var(--secondary-color);
+    border-radius: 25px;
+    padding: 5px 10px;
 }
 
 #message-input {
     flex-grow: 1;
-    border: 1px solid #ccc;
-    border-radius: 20px;
+    border: none;
+    background: transparent;
     padding: 10px 15px;
-    font-size: 1em;
+    font-size: 1rem;
+    font-family: var(--font-family);
+    resize: none;
+    max-height: 100px;
+}
+
+#message-input:focus {
+    outline: none;
 }
 
 #send-button {
-    background-color: #004a7c; /* Tata Capital Blue */
-    color: white;
+    background-color: var(--primary-color);
+    color: var(--white);
     border: none;
-    border-radius: 20px;
-    padding: 10px 20px;
-    margin-left: 10px;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     cursor: pointer;
-    font-size: 1em;
+    transition: background-color 0.2s;
 }
 
 #send-button:hover {
     background-color: #003a5c;
+}
+
+.message .download-button {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 10px 20px;
+    background-color: #28a745; /* A contrasting green color */
+    color: var(--white);
+    text-decoration: none;
+    border-radius: 20px;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.message .download-button:hover {
+    background-color: #218838;
+}
+
+/* --- NEW: Pre-Approval Banner Styles --- */
+.pre-approval-banner {
+    background: linear-gradient(135deg, #28a745, #20c997); /* A nice green gradient */
+    color: white;
+    padding: 15px 20px;
+    border-radius: 12px;
+    text-align: center;
+    animation: fadeIn 0.5s ease-in-out;
+    border: none;
+    box-shadow: 0 4px 10px rgba(40, 167, 69, 0.2);
+}
+
+.banner-header {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.banner-body {
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.banner-amount {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-top: 5px;
 }

@@ -33,14 +33,15 @@ class VerificationAgent:
         
         if customer:
             print(f"[Verification Agent] ✅ Successfully verified customer: {customer['name']}")
-            # Return only the necessary KYC details
+            # Return only the necessary KYC details, INCLUDING the pre-approved limit
             return {
                 "status": "success",
                 "customer_id": customer['customer_id'],
                 "name": customer['name'],
                 "phone": customer['phone'],
                 "email": customer['email'],
-                "address": customer['address']
+                "address": customer['address'],
+                "pre_approved_limit": customer['pre_approved_limit'] # <-- THIS IS THE FIX
             }
         else:
             print(f"[Verification Agent] ❌ Verification failed. No customer found with phone: {phone_number}")

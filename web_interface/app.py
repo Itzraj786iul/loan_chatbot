@@ -1,5 +1,5 @@
 # web_interface/app.py
-from flask import Flask, render_template, request, jsonify, send_from_directory # <-- ADD send_from_directory HERE
+from flask import Flask, render_template, request, jsonify, send_from_directory
 from flask_cors import CORS
 import sys
 import os
@@ -13,7 +13,8 @@ app = Flask(__name__)
 # Enable CORS for all routes
 CORS(app) 
 
-# Create a single instance of the Master Agent
+# Create a single instance of the Master Agent to be used across sessions
+# In a real product with many users, you'd manage agent instances more carefully
 master_agent = MasterAgent()
 
 @app.route('/')
@@ -23,7 +24,7 @@ def index():
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    # ... (keep all the existing code for the /chat route) ...
+    """Handles chat messages from the user."""
     # Get the user's message from the POST request
     user_message = request.json.get('message', '')
     
@@ -46,7 +47,19 @@ def chat():
             if verification_result['status'] == 'success':
                 chat.customer_details = verification_result
                 chat.state = 'AWAITING_LOAN_AMOUNT'
-                response_message = f"Thank you, {chat.customer_details['name']}! I've found your profile. How much would you like to borrow? (e.g., 500000)"
+                
+                # --- FIX: Get the pre-approved limit from the verification result ---
+                pre_approved_limit = verification_result['pre_approved_limit']
+                
+                response_message = f"Thank you, {chat.customer_details['name']}! I've found your profile."
+                
+                # Return a special JSON object to trigger the banner on the frontend
+                return jsonify({
+                    "message": response_message,
+                    "show_pre_approval_banner": True,
+                    "customer_name": chat.customer_details['name'],
+                    "pre_approved_limit": pre_approved_limit
+                })
             else:
                 response_message = "I'm sorry, but I couldn't find an account associated with that number. Please check and try again."
         else:
@@ -97,7 +110,6 @@ def chat():
                 letter_result = master_agent.sanction_generator.generate_letter(chat.customer_details, loan_details_for_letter)
                 
                 if letter_result['status'] == 'success':
-                    # --- MODIFICATION HERE ---
                     # Pass the filename to the frontend
                     response_message += f"\n\n🎉 Congratulations! Your loan of ₹{loan_details_for_letter['approved_amount']:,} has been approved."
                     response_message += f"||DOWNLOAD_LINK:{letter_result['filename']}||" # Special marker for the frontend
@@ -116,7 +128,6 @@ def chat():
                 }
                 letter_result = master_agent.sanction_generator.generate_letter(chat.customer_details, loan_details_for_letter)
                 if letter_result['status'] == 'success':
-                    # --- MODIFICATION HERE ---
                     response_message += f"\n\n🎉 Congratulations! Your loan of ₹{loan_details_for_letter['approved_amount']:,} has been approved."
                     response_message += f"||DOWNLOAD_LINK:{letter_result['filename']}||" # Special marker for the frontend
                     chat.state = 'CONVERSATION_END'
@@ -137,7 +148,6 @@ def chat():
     return jsonify({"message": response_message})
 
 
-# --- ADD THIS NEW ROUTE ---
 @app.route('/download_letter/<filename>')
 def download_letter(filename):
     """Serves the generated sanction letter for download."""
