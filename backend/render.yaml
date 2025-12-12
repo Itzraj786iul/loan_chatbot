@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: tata-capital-api
+    env: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt && python mock_apis/server.py"
+    startCommand: "python mock_apis/server.py"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.2
